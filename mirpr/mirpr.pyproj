@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="MatrixKnn.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mirpr.py" />
   </ItemGroup>
   <ItemGroup>
