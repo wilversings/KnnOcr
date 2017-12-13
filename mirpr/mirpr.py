@@ -18,5 +18,7 @@ test_im = np.ndarray.astype(cv2.cvtColor(cv2.imread('test.png'), cv2.COLOR_BGR2G
 
 number, indexes, knn_hash = knn.get_thresholded_match(test_im)
 
-print("Guessed number: " + str(number));
-print("With a score of: " + str(sum(map(lambda x : indexes[x][0], knn_hash[number]))))
+print("Guessed digit: " + str(number));
+print("With a score of: " + "{:,}".format((
+    sum(map(lambda x : MatrixKnn.euclidian_squared(test_im, x), flatten[number * 500: (number + 1) * 500]))
+)))
