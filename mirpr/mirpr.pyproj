@@ -21,13 +21,22 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MatrixKnn.py">
+    <Compile Include="KnnBuilder\KnnMatchResult.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="KnnBuilder\MatrixKnn.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="KnnBuilder\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mirpr.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="KnnBuilder\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
