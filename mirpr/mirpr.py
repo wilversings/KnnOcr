@@ -16,9 +16,9 @@ knn = MatrixKnn(flat)
 
 test_im = np.ndarray.astype(cv2.cvtColor(cv2.imread('test.png'), cv2.COLOR_BGR2GRAY), 'int64')
 
-res = knn.get_thresholded_match(test_im)
+print(knn.get_thresholded_match(test_im))
 
-print("Guessed digit: " + str(res.guessed_number));
-print("With a score of: " + "{:,}".format(
-    res.score
-))
+#print("Guessed digit: " + str(res.guessed_number));
+#print("With a score of: " + "{:,}".format(
+#    res.score
+#))

@@ -9,3 +9,8 @@ class KnnMatchResult:
         self.score = score
         self.is_valid = is_valid
 
+    def __str__(self):
+        return "Nr: {}, Score: {}\n".format(self.guessed_number, self.score)
+
+    def __repr__(self):
+        return str(self)
