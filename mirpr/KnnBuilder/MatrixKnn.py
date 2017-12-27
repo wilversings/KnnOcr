@@ -13,12 +13,12 @@ default_treshold = {
     6: 99999999999999, # not recognisable
     7: 99999999999999, # not recognisable
     8: 1787737414,
-    9: 99999999999999
+    9: 99999999999999 # not recognisable
 }
 
 class MatrixKnn:
 
-    
+    k = 3
 
     #In pixels.
     scale_precission =          4
@@ -31,7 +31,10 @@ class MatrixKnn:
 
     def __init__(self, train_matrices, threshold_map = default_treshold):
         
+        for mat in train_matrices:
+            assert(mat.shape[0] == mat.shape[1] and mat.shape[0] == MatrixKnn.train_matrix_size)
         self.train_matrices = train_matrices
+
         self.thresholds = threshold_map
 
     @staticmethod
@@ -49,7 +52,7 @@ class MatrixKnn:
         indexes.sort(key=lambda x : x[1])
 
         knn_hash = defaultdict(lambda: [])
-        for i in range(7):
+        for i in range(MatrixKnn.k):
             knn_hash[(indexes[i][0] + 1) // 500].append(i)
 
         guessed_number = max(list(knn_hash), key=lambda x: len(knn_hash[x]))
@@ -61,8 +64,8 @@ class MatrixKnn:
     def __steps(start,end,n):
         if n<2:
             raise Exception("behaviour not defined for n<2")
-        step = (end-start)/float(n-1)
-        return [int(round(start+x*step)) for x in range(n)]
+        step = (end - start) / float(n - 1)
+        return [int(round(start + x * step)) for x in range(n)]
 
     @staticmethod
     def __scale(mat):
@@ -77,13 +80,13 @@ class MatrixKnn:
         cols = matrix.shape[1]
         scale_max = min(rows, cols)
 
-        assert(scale_max >= 20)
+        assert(scale_max >= MatrixKnn.train_matrix_size)
         
         for scale in range(MatrixKnn.min_size, scale_max, MatrixKnn.scale_precission):
             for row in range(0, rows - scale, MatrixKnn.translation_precission):
                 for col in range(0, cols - scale, MatrixKnn.translation_precission):
 
-                    minor = matrix[row : row + scale, col : col + scale]
-                    scaled = MatrixKnn.__scale(minor)
-                    yield self.get_thresholded_match(scaled)
+                    yield self.get_thresholded_match(
+                        MatrixKnn.__scale(matrix[row : row + scale, col : col + scale])
+                    )
 
