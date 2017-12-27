@@ -3,15 +3,22 @@ from KnnBuilder.KnnMatchResult import KnnMatchResult
 from operator import itemgetter
 from collections import defaultdict
 
-class MatrixKnn():
+default_treshold = {
+    0: 1539198846,
+    1: 988460674,
+    2: 1643104477,
+    3: 1302632161,
+    4: 1553022526,
+    5: 1810169042,
+    6: 99999999999999, # not recognisable
+    7: 99999999999999, # not recognisable
+    8: 1787737414,
+    9: 99999999999999
+}
 
-    default_treshold = {
-        0: 1539198846,
-        1: 988460674,
-        2: 1643104477,
-        3: 1302632161,
-        4: 1553022526,
-    }
+class MatrixKnn:
+
+    
 
     #In pixels.
     scale_precission =          4
@@ -20,9 +27,9 @@ class MatrixKnn():
     #In pixels.
     train_matrix_size =         20
     #In pixels.
-    min_size =                  30
+    min_size =                  46
 
-    def __init__(self, train_matrices, threshold_map = defaultdict(lambda: -1)):
+    def __init__(self, train_matrices, threshold_map = default_treshold):
         
         self.train_matrices = train_matrices
         self.thresholds = threshold_map
@@ -48,7 +55,7 @@ class MatrixKnn():
         guessed_number = max(list(knn_hash), key=lambda x: len(knn_hash[x]))
         score = sum(indexes_unsorted[guessed_number * 500: (guessed_number + 1) * 500])
 
-        return KnnMatchResult(guessed_number, score, self.thresholds[guessed_number] < score)
+        return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
 
     @staticmethod
     def __steps(start,end,n):
