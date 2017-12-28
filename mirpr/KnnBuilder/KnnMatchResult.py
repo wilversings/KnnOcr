@@ -1,7 +1,5 @@
 
 
-
-
 class KnnMatchResult:
     
     def __init__(self, guessed_number, score, is_valid):

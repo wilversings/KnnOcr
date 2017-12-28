@@ -26,7 +26,7 @@ class MatrixKnn:
     #In pixels.
     translation_precission =    4
     #In pixels.
-    train_matrix_size =         20
+    train_matrix_size =         28
     #In pixels.
     min_size =                  35
     #In pixels.
@@ -43,7 +43,7 @@ class MatrixKnn:
 
     @staticmethod
     def euclidian_squared(mat1, mat2):
-        return np.power(mat1 - mat2, 2).sum()
+        return np.power(mat1 - mat2, 2).sum(dtype='uint32')
 
     def calibrate_thresholds():
         pass
@@ -61,10 +61,10 @@ class MatrixKnn:
 
         knn_hash = defaultdict(lambda: [])
         for i in range(MatrixKnn.k):
-            knn_hash[(indexes[i][0] + 1) // 500].append(i)
+            knn_hash[(indexes[i][0] + 1) // 6000].append(i)
 
         guessed_number = max(list(knn_hash), key=lambda x: len(knn_hash[x]))
-        score = sum(indexes_unsorted[guessed_number * 500: (guessed_number + 1) * 500])
+        score = np.ma.sum(indexes_unsorted[guessed_number * 6000: (guessed_number + 1) * 6000], dtype='uint64')
 
         return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
 

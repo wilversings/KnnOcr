@@ -5,22 +5,33 @@ import cv2
 from matplotlib import pyplot as plt
 from functools import reduce
 from KnnBuilder.MatrixKnn import MatrixKnn
+import sys
 
 if __name__ == "__main__":
-    img = cv2.imread('train/digits.png')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    print ("\nPlease wait, loading ...", end='')
+    sys.stdout.flush()
 
-    cells = [np.hsplit(row, 100) for row in np.vsplit(gray, 50)]
+    with open('train/mnist', 'rb') as mnist:
+        mnist.seek(0x10)
+        bytes = np.ndarray.astype(np.array(bytearray(mnist.read())), 'int16')
 
-    flat = reduce(lambda a, b: a + b, cells)
+    with open('train/mnist_labels', 'rb') as labels:
+        labels.seek(8)
+        label = bytearray(labels.read())
 
-    knn = MatrixKnn(flat)
+    mnist = np.array_split(np.array_split(bytes, 60000 * 28), 60000)
 
-    test_im = np.ndarray.astype(cv2.cvtColor(cv2.imread('test.png'), cv2.COLOR_BGR2GRAY), 'int64')
+    zipped = list(map(lambda sample, index: (sample, index), mnist, label))
+    zipped.sort(key=lambda a: a[1])
+    mnist = list(map(lambda x: x[0], zipped))
+    knn = MatrixKnn(mnist)
+
+    print ("\rDone. Continue to scan")
+
+    while True:
+        input()
+        print("Loading...")
+
+        test_im = np.ndarray.astype(cv2.cvtColor(cv2.imread('test.png'), cv2.COLOR_BGR2GRAY), 'int16')
     
-    print(knn.get_expression(test_im))
-
-    #print("Guessed digit: " + str(res.guessed_number));
-    #print("With a score of: " + "{:,}".format(
-    #    res.score
-    #))
+        print(list(knn.get_all_matches(test_im)))
