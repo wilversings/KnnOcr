@@ -126,5 +126,7 @@ class MatrixKnn:
             col = 0
         row = 0
 
+    def get_expression(self, matrix):
 
+        return ''.join(map(lambda x: str(x.guessed_number), self.get_all_matches(matrix)))
 
