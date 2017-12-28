@@ -30,7 +30,7 @@ class MatrixKnn:
     #In pixels.
     min_size =                  35
     #In pixels.
-    scale_difference =          4
+    scale_difference =          8
 
 
     def __init__(self, train_matrices, threshold_map = default_treshold):
@@ -83,9 +83,11 @@ class MatrixKnn:
         return      mat[lines][:,lines]
 
     def __find_first_match(self, matrix, rows, cols, scale_max):
+
         for scale in range(scale_max, MatrixKnn.min_size, -MatrixKnn.scale_precission):
             for row in range(0, rows - scale, MatrixKnn.translation_precission):
                 for col in range(0, cols - scale, MatrixKnn.translation_precission):
+
                     match = self.get_thresholded_match(
                         MatrixKnn.__scale(matrix[row : row + scale, col : col + scale])
                     )
@@ -102,7 +104,27 @@ class MatrixKnn:
         assert(scale_max >= MatrixKnn.train_matrix_size)
         
         scale, row, col, match = self.__find_first_match(matrix, rows, cols, scale_max)
-        return [match]
+
+        row_jmp = None
+        col_jmp = None
+
+        for row in range(row, rows - scale, MatrixKnn.translation_precission):
+
+            while col < cols - scale:
+
+                match = self.get_thresholded_match(
+                    MatrixKnn.__scale(matrix[row : row + scale, col : col + scale])
+                )
+                if match.is_valid:
+                    match.set_coords(row, col, scale)
+                    col_jmp = int(scale * 2/3)
+                    yield match
+                else:
+                    col_jmp = None
+
+                col += col_jmp or MatrixKnn.translation_precission
+            col = 0
+        row = 0
 
 
 
