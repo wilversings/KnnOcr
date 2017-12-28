@@ -44,7 +44,7 @@ class MatrixKnn:
     def calibrate_thresholds():
         pass
 
-    def get_thresholded_match(self, matrix):
+    def get_thresholded_match(self, matrix) -> KnnMatchResult:
         assert(matrix.shape[0] == matrix.shape[1] and matrix.shape[0] == MatrixKnn.train_matrix_size)
 
         indexes_unsorted = list(map(lambda mat: MatrixKnn.euclidian_squared(np.matrix(mat), matrix), self.train_matrices))
@@ -61,7 +61,7 @@ class MatrixKnn:
         return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
 
     @staticmethod
-    def __steps(start,end,n):
+    def __steps(start,end,n) -> list[int]:
         if n<2:
             raise Exception("behaviour not defined for n<2")
         step = (end - start) / float(n - 1)
@@ -72,7 +72,6 @@ class MatrixKnn:
         assert(mat.shape[0] == mat.shape[1] and mat.shape[0] >= 20)
         lines = MatrixKnn.__steps(0, mat.shape[0] - 1, MatrixKnn.train_matrix_size)
         return mat[lines][:,lines]
-
 
     def get_all_matches(self, matrix):
 
@@ -88,5 +87,5 @@ class MatrixKnn:
 
                     yield self.get_thresholded_match(
                         MatrixKnn.__scale(matrix[row : row + scale, col : col + scale])
-                    )
+                    ).set_coords(row, col, scale)
 
