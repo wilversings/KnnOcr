@@ -14,17 +14,18 @@ class KnnMatchResult:
         self.__scale =          None
 
     def __str__(self):
-        return "Nr: {}, Score: {}\n".format(self.guessed_number, self.score)
+        return "Nr: {}, Score: {}, Row: {}, Col: {}, Scale: {}\n"\
+            .format(self.guessed_number, self.score, self.__row, self.__col, self.__scale)
 
     def __repr__(self):
         return str(self)
 
     # Chainable
-    def set_coords(self, row, col, scale) -> KnnMatchResult:
+    def set_coords(self, row, col, scale):
+
         self.__row =    row
         self.__col =    col
         self.__scale =  scale
-        return self
 
     @property
     def row(self):
