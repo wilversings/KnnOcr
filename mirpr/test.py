@@ -1,5 +1,6 @@
 
 import mirpr
+from _collections import defaultdict
 from KnnBuilder.MatrixKnn import MatrixKnn
 import numpy as np
 import sys
@@ -26,9 +27,11 @@ if __name__ == "__main__":
     knn = MatrixKnn(mirpr.parse())
     print("Done!\n")
 
+    score_calib = open("train/score_calib.json", "w")
     bingos = 0
     total = 10000
     iter = 0
+    scores = [0] * 10
     for test in tests:
 
         print("\r-------------------------Loading... {}%. Accuracy so far: {}/{} ({}%)-------------------------"
@@ -39,5 +42,8 @@ if __name__ == "__main__":
         res = knn.get_thresholded_match(test[0])
         if res.guessed_number == test[1]:
             bingos += 1
+            scores[res.guessed_number] = max(scores[res.guessed_number], res.score)
 
-    print("Accuracy: {}%".format((bingos / total) * 100))
+    score_calib.write(str(scores))
+    score_calib.close()
+    print("Final accuracy: {}%".format((bingos / total) * 100))

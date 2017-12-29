@@ -1,4 +1,5 @@
 import numpy as np
+from KnnBuilder.TrainMatrices import TrainMatrices
 import multiprocessing
 from KnnBuilder.KnnMatchResult import KnnMatchResult
 from operator import itemgetter
@@ -56,6 +57,9 @@ class MatrixKnn:
                         lambda mat: (MatrixKnn.euclidian_squared(mat[0], matrix), mat[1]), 
                         self.train_matrices
                     ))
+        digit_map = defaultdict(lambda: [])
+        for ind in indexes:
+            digit_map[ind[1]] = ind[0]
 
         indexes.sort(key=lambda x : x[0])
 
@@ -64,7 +68,7 @@ class MatrixKnn:
             knn_hash[indexes[i][1]].append(i)
 
         guessed_number = max(list(knn_hash), key=lambda x: (len(knn_hash[x]), -sum(knn_hash[x])))
-        score = 0 #np.ma.sum(indexes_unsorted[guessed_number * 6000: (guessed_number + 1) * 6000], dtype='uint64')
+        score = np.ma.sum(digit_map[guessed_number], dtype='uint64')
 
         return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
 

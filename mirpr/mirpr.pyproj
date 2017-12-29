@@ -27,6 +27,9 @@
     <Compile Include="KnnBuilder\MatrixKnn.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="KnnBuilder\TrainMatrices.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="KnnBuilder\__init__.py">
       <SubType>Code</SubType>
     </Compile>
