@@ -7,10 +7,7 @@ from functools import reduce
 from KnnBuilder.MatrixKnn import MatrixKnn
 import sys
 
-if __name__ == "__main__":
-    print ("\nPlease wait, loading ...", end='')
-    sys.stdout.flush()
-
+def parse():
     with open('train/mnist', 'rb') as mnist:
         mnist.seek(0x10)
         bytes = np.ndarray.astype(np.array(bytearray(mnist.read())), 'int16')
@@ -21,12 +18,18 @@ if __name__ == "__main__":
 
     mnist = np.array_split(np.array_split(bytes, 60000 * 28), 60000)
 
-    zipped = list(map(lambda sample, index: (sample, index), mnist, label))
-    zipped.sort(key=lambda a: a[1])
-    mnist = list(map(lambda x: x[0], zipped))
-    knn = MatrixKnn(mnist)
+    assert(mnist[-1].shape[0] == 28 and mnist[-1].shape[1] == 28)
+    assert(len(mnist) == 60000 and len(label) == 60000)
 
-    print ("\rDone. Continue to scan")
+    zipped = list(map(lambda sample, index: (sample, index), mnist, label))
+    return zipped
+
+if __name__ == "__main__":
+    print ("\nParsing training data...")
+
+    knn = MatrixKnn(parse())
+
+    print ("Done. Continue to scan")
 
     while True:
         input()

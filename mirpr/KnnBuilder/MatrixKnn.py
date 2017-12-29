@@ -19,7 +19,7 @@ default_treshold = {
 
 class MatrixKnn:
 
-    k = 3
+    k = 7
 
     #In pixels.
     scale_precission =          4
@@ -36,14 +36,15 @@ class MatrixKnn:
     def __init__(self, train_matrices, threshold_map = default_treshold):
         
         for mat in train_matrices:
-            assert(mat.shape[0] == mat.shape[1] and mat.shape[0] == MatrixKnn.train_matrix_size)
+            assert(mat[0].shape[0] == mat[0].shape[1] and mat[0].shape[0] == MatrixKnn.train_matrix_size)
 
         self.train_matrices =   train_matrices
         self.thresholds =       threshold_map
 
     @staticmethod
     def euclidian_squared(mat1, mat2):
-        return np.power(mat1 - mat2, 2).sum(dtype='uint32')
+        mat = mat1 - mat2
+        return np.multiply(mat, mat, dtype='int32').sum()
 
     def calibrate_thresholds():
         pass
@@ -51,20 +52,19 @@ class MatrixKnn:
     def get_thresholded_match(self, matrix) -> KnnMatchResult:
         assert(matrix.shape[0] == matrix.shape[1] and matrix.shape[0] == MatrixKnn.train_matrix_size)
 
-        indexes_unsorted =  list(map(
-                                lambda mat: MatrixKnn.euclidian_squared(np.matrix(mat), matrix), 
-                                self.train_matrices
-                            ))
-        indexes =           list(enumerate(indexes_unsorted))
+        indexes =  list(map(
+                        lambda mat: (MatrixKnn.euclidian_squared(mat[0], matrix), mat[1]), 
+                        self.train_matrices
+                    ))
 
-        indexes.sort(key=lambda x : x[1])
+        indexes.sort(key=lambda x : x[0])
 
         knn_hash = defaultdict(lambda: [])
         for i in range(MatrixKnn.k):
-            knn_hash[(indexes[i][0] + 1) // 6000].append(i)
+            knn_hash[indexes[i][1]].append(i)
 
-        guessed_number = max(list(knn_hash), key=lambda x: len(knn_hash[x]))
-        score = np.ma.sum(indexes_unsorted[guessed_number * 6000: (guessed_number + 1) * 6000], dtype='uint64')
+        guessed_number = max(list(knn_hash), key=lambda x: (len(knn_hash[x]), -sum(knn_hash[x])))
+        score = 0 #np.ma.sum(indexes_unsorted[guessed_number * 6000: (guessed_number + 1) * 6000], dtype='uint64')
 
         return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
 
