@@ -4,6 +4,8 @@ from _collections import defaultdict
 from KnnBuilder.MatrixKnn import MatrixKnn
 import numpy as np
 import sys
+import cv2
+import os
 
 def parse_test():
     with open('test/mnist_test', 'rb') as mnist:
@@ -32,6 +34,7 @@ if __name__ == "__main__":
     total = 10000
     iter = 0
     scores = [0] * 10
+    nth_mistake = 0
     for test in tests:
 
         print("\r-------------------------Loading... {}%. Accuracy so far: {}/{} ({}%)-------------------------"
@@ -43,6 +46,18 @@ if __name__ == "__main__":
         if res.guessed_number == test[1]:
             bingos += 1
             scores[res.guessed_number] = max(scores[res.guessed_number], res.score)
+        else:
+            folder_path = "fails/ordine " + str(nth_mistake) + " " + str(test[1]) + "-" + str(res.guessed_number) + "/";
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+
+            cv2.imwrite(folder_path + str(test[1]) + "-" + str(res.guessed_number) + ".png", test[0])
+            nth_mistake += 1
+            i = 0
+            for match in res.k_best:
+                cv2.imwrite(folder_path + "ordine " + str(i) + " cifra " + str(match[0]) + ".png", match[1])
+                i += 1
+            # Log mistake
 
     score_calib.write(str(scores))
     score_calib.close()

@@ -2,7 +2,7 @@
 
 class KnnMatchResult:
     
-    def __init__(self, guessed_number, score, is_valid):
+    def __init__(self, guessed_number, score, is_valid, k_best):
 
         self.guessed_number =   guessed_number
         self.score =            score
@@ -10,6 +10,7 @@ class KnnMatchResult:
         self.__row =            None
         self.__col =            None
         self.__scale =          None
+        self.__k_best =         k_best
 
     def __str__(self):
         return "Nr: {}, Score: {}, Row: {}, Col: {}, Scale: {}\n"\
@@ -36,3 +37,8 @@ class KnnMatchResult:
     @property
     def scale(self):
         return self.__scale
+
+    @property
+    def k_best(self):
+        return self.__k_best
+

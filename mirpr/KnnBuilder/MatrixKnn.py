@@ -54,7 +54,7 @@ class MatrixKnn:
         assert(matrix.shape[0] == matrix.shape[1] and matrix.shape[0] == MatrixKnn.train_matrix_size)
 
         indexes =  list(map(
-                        lambda mat: (MatrixKnn.euclidian_squared(mat[0], matrix), mat[1]), 
+                        lambda mat: (MatrixKnn.euclidian_squared(mat[0], matrix), mat[1], mat[0]), 
                         self.train_matrices
                     ))
         digit_map = defaultdict(lambda: [])
@@ -70,7 +70,7 @@ class MatrixKnn:
         guessed_number = max(list(knn_hash), key=lambda x: (len(knn_hash[x]), -sum(knn_hash[x])))
         score = np.ma.sum(digit_map[guessed_number], dtype='uint64')
 
-        return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4)
+        return KnnMatchResult(guessed_number, score, score <= self.thresholds[guessed_number] * 5/4, list(map(lambda x: (x[1], x[2]), indexes[:MatrixKnn.k])))
 
     @staticmethod
     def __steps(start,end,n):
