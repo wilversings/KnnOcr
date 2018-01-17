@@ -121,7 +121,7 @@ class MatrixKnn:
                 )
                 if match.is_valid:
                     match.set_coords(row, col, scale)
-                    col_jmp = int(scale * 2/3)
+                    col_jmp = int(scale * 5/6)
                     yield match
                 else:
                     col_jmp = None
