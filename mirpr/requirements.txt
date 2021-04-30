@@ -31,7 +31,7 @@ pycryptodomex==3.4.7
 pylint==1.7.4
 python-dateutil==2.6.1
 requests==2.18.4
-rsa==3.4.2
+rsa==4.7
 setuptools==28.8.0
 six==1.11.0
 urllib3==1.22
